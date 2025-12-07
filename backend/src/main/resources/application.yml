@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: ferm-timer
+  datasource:
+    url: jdbc:h2:file:./data/ferm-timer-db
+    driver-class-name: org.h2.Driver
+    username: ferm
+    password: ferm
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+
+ferm:
+  main-duration-hours: 50
+  warning-minutes-left: 5
+  breach-minutes-after: 15
+  sub-timers: 5,10,15,30,50
+  log-directory: logs
+
+logging:
+  pattern:
+    console: "%d{HH:mm:ss} %-5level %logger{36} - %msg%n"
