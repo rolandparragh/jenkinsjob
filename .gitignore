@@ -1,0 +1,17 @@
+node_modules/
+dist/
+logs/
+.idea/
+.vscode/
+*.log
+
+# Backend
+backend/target/
+backend/.classpath
+backend/.project
+backend/.settings/
+
+# Frontend build artifacts
+frontend/.angular/
+frontend/node_modules/
+frontend/dist/

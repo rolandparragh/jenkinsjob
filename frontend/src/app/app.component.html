@@ -1,0 +1,70 @@
+<div class="app-shell">
+  <header class="app-header">
+    <div class="title-block">
+      <h1>{{ title }}</h1>
+      <p>Live Ferm segments with autonomous 50-hour clocks and five checkpoints.</p>
+    </div>
+    <div class="controls">
+      <button class="ghost" type="button" (click)="loadFerms()">Refresh</button>
+      <button class="ghost" type="button" *ngIf="!notificationsEnabled" (click)="enableNotifications()">
+        Enable device notifications
+      </button>
+    </div>
+  </header>
+
+  <section class="banners">
+    <div class="banner info" *ngIf="infoMessage">{{ infoMessage }}</div>
+    <div class="banner error" *ngIf="errorMessage">{{ errorMessage }}</div>
+  </section>
+
+  <section class="alerts-panel" *ngIf="alerts.length > 0">
+    <h2>Active Alerts</h2>
+    <div class="alert-list">
+      <article class="alert-card" *ngFor="let alert of alerts">
+        <div class="alert-body">
+          <div class="alert-title">{{ alert.fermName }} • {{ alert.timerLabel }}</div>
+          <div class="alert-message">{{ alert.message }}</div>
+          <small>{{ alert.createdAt | date: 'short' }}</small>
+        </div>
+        <button type="button" (click)="acknowledgeAlert(alert)">Acknowledge</button>
+      </article>
+    </div>
+  </section>
+
+  <section class="board">
+    <article class="ferm-card" *ngFor="let ferm of ferms">
+      <div class="ferm-header">
+        <div class="ferm-label">Ferm {{ ferm.id }}</div>
+        <button type="button" (click)="startFerm(ferm)" [disabled]="!canStart(ferm)">
+          {{ startLoading.has(ferm.id) ? 'Starting…' : 'Start 50h' }}
+        </button>
+      </div>
+      <div class="timer-display" [ngClass]="tileClass(ferm.mainTimer)">
+        <div class="timer-value">{{ formatCountdown(ferm.mainTimer) }}</div>
+        <div class="timer-status">
+          <ng-container *ngIf="ferm.mainTimer.startedAt; else idleMain">
+            <span *ngIf="ferm.mainTimer.running">Counting down</span>
+            <span *ngIf="!ferm.mainTimer.running && secondsPastZero(ferm.mainTimer) === 0">Reached zero</span>
+            <span *ngIf="secondsPastZero(ferm.mainTimer) > 0">
+              Overdue by {{ formatOverdue(ferm.mainTimer) }}
+            </span>
+          </ng-container>
+          <ng-template #idleMain>Waiting to start</ng-template>
+        </div>
+      </div>
+      <div class="sub-grid">
+        <button
+          class="sub-button"
+          type="button"
+          *ngFor="let timer of ferm.subTimers"
+          [ngClass]="tileClass(timer)"
+          (click)="stopSubTimer(ferm, timer)"
+          [disabled]="isSubStopDisabled(ferm, timer)"
+        >
+          <span class="sub-label">{{ timer.label }}</span>
+          <span class="sub-time">{{ formatCountdown(timer) }}</span>
+        </button>
+      </div>
+    </article>
+  </section>
+</div>
