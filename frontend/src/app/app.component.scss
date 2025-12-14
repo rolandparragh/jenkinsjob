@@ -190,6 +190,12 @@ button.ghost {
   color: #d1d5db;
 }
 
+.timer-actions {
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: center;
+}
+
 .sub-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));

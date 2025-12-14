@@ -56,6 +56,11 @@
           </ng-container>
           <ng-template #idleMain>Waiting to start</ng-template>
         </div>
+        <div class="timer-actions" *ngIf="ferm.mainTimer.startedAt">
+          <button type="button" (click)="resetAllTimers(ferm)" [disabled]="!canReset(ferm)" class="reset-button">
+            {{ resetLoading.has(ferm.id) ? 'Resetting…' : 'Reset All Timers' }}
+          </button>
+        </div>
       </div>
       <div class="sub-grid">
         <button
