@@ -35,14 +35,9 @@
     <article class="ferm-card" *ngFor="let ferm of ferms">
       <div class="ferm-header">
         <div class="ferm-label">Ferm {{ ferm.id }}</div>
-        <div class="ferm-actions">
-          <button type="button" (click)="startFerm(ferm)" [disabled]="!canStart(ferm)">
-            {{ startLoading.has(ferm.id) ? 'Starting…' : 'Start 50h' }}
-          </button>
-          <button type="button" (click)="resetAllTimers(ferm)" [disabled]="!canReset(ferm)" class="reset-button">
-            {{ resetLoading.has(ferm.id) ? 'Resetting…' : 'Reset All' }}
-          </button>
-        </div>
+        <button type="button" (click)="startFerm(ferm)" [disabled]="!canStart(ferm)">
+          {{ startLoading.has(ferm.id) ? 'Starting…' : 'Start 50h' }}
+        </button>
       </div>
       <div class="timer-display" [ngClass]="tileClass(ferm.mainTimer)">
         <div class="timer-value">{{ formatCountdown(ferm.mainTimer) }}</div>
