@@ -1,9 +1,11 @@
 package com.example.ferm.controller;
 
+import com.example.ferm.domain.FermSegment;
 import com.example.ferm.domain.TimerSession;
 import com.example.ferm.dto.FermDto;
 import com.example.ferm.service.TimerService;
 import com.example.ferm.service.TimerViewMapper;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,9 +50,13 @@ public class FermController {
 
     @PostMapping("/{id}/reset")
     public FermDto resetAllTimers(@PathVariable Long id) {
-        TimerSession session = timerService.resetAllTimers(id);
-        String name = session.getFerm().getName();
+        timerService.resetAllTimers(id);
+        // Get ferm name from repository to avoid lazy loading issues
+        FermSegment ferm = timerService.allFerms().stream()
+                .filter(f -> f.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("Ferm segment not found"));
         // After reset, session is no longer active, so pass null to show idle state
-        return mapper.toDto(id, name, null);
+        return mapper.toDto(id, ferm.getName(), null);
     }
 }

@@ -147,9 +147,12 @@ export class AppComponent implements OnInit, OnDestroy {
       .subscribe({
         next: updated => {
           this.mergeFerm(updated);
+          this.errorMessage = undefined;
         },
         error: err => {
-          this.errorMessage = err?.error?.message ?? 'Failed to reset timers.';
+          const errorMsg = err?.error?.message || err?.message || 'Failed to reset timers.';
+          this.errorMessage = errorMsg;
+          console.error('Reset error:', err);
         }
       });
   }
