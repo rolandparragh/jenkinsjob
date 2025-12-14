@@ -210,6 +210,16 @@ button.ghost {
 
 .sub-button.red {
   border-color: rgba(239, 68, 68, 0.6);
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+}
+
+.sub-button.red .sub-label {
+  color: #fca5a5;
+}
+
+.sub-button.red .sub-time {
+  color: #fca5a5;
 }
 
 .sub-button.gray {
