@@ -163,7 +163,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   canReset(ferm: FermDto): boolean {
-    return ferm.mainTimer.startedAt && !this.resetLoading.has(ferm.id);
+    return !!ferm.mainTimer.startedAt && !this.resetLoading.has(ferm.id);
   }
 
   tileClass(timer: TimerDto, isSubTimer: boolean = false): string {
