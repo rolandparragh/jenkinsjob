@@ -185,11 +185,11 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   formatCountdown(timer: TimerDto, isSubTimer: boolean = false): string {
-    // For subtimers, when past zero, show the count-up time instead of 0
+    // For subtimers, when past zero, show the count-up time with "+" prefix instead of 0
     if (isSubTimer) {
       const pastZero = this.secondsPastZero(timer);
       if (pastZero > 0) {
-        return this.formatDuration(pastZero);
+        return '+' + this.formatDuration(pastZero);
       }
     }
     const remaining = this.secondsRemaining(timer);
