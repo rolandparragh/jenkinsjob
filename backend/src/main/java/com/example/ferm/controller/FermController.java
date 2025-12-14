@@ -45,4 +45,13 @@ public class FermController {
         String name = session != null ? session.getFerm().getName() : "Ferm " + id;
         return mapper.toDto(id, name, session);
     }
+
+    @PostMapping("/{id}/reset")
+    public FermDto resetAllTimers(@PathVariable Long id) {
+        timerService.resetAllTimers(id);
+        Map<Long, TimerSession> active = timerService.activeSessionsByFerm();
+        TimerSession session = active.get(id);
+        String name = session != null ? session.getFerm().getName() : "Ferm " + id;
+        return mapper.toDto(id, name, session);
+    }
 }

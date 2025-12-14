@@ -20,6 +20,10 @@ export class ApiService {
     return this.http.post<FermDto>(`${this.baseUrl}/ferms/${id}/sub-timers/${duration}/stop`, {});
   }
 
+  resetAllTimers(id: number): Observable<FermDto> {
+    return this.http.post<FermDto>(`${this.baseUrl}/ferms/${id}/reset`, {});
+  }
+
   getAlerts(): Observable<AlertDto[]> {
     return this.http.get<AlertDto[]>(`${this.baseUrl}/alerts`);
   }
