@@ -21,7 +21,9 @@ export class ApiService {
   }
 
   resetAllTimers(id: number): Observable<FermDto> {
-    return this.http.post<FermDto>(`${this.baseUrl}/ferms/${id}/reset`, {});
+    const url = `${this.baseUrl}/ferms/${id}/reset`;
+    console.log('Reset URL:', url);
+    return this.http.post<FermDto>(url, {});
   }
 
   getAlerts(): Observable<AlertDto[]> {
