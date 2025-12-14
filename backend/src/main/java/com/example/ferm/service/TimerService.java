@@ -108,6 +108,30 @@ public class TimerService {
         return sub;
     }
 
+    @Transactional
+    public TimerSession resetAllTimers(Long fermId) {
+        TimerSession session = sessionRepository.findFirstByFermIdAndActiveTrue(fermId)
+                .orElseThrow(() -> new IllegalStateException("No running timer for Ferm " + fermId));
+
+        Instant now = Instant.now();
+        
+        // Stop all subtimers that haven't been stopped yet
+        session.getSubTimers().stream()
+                .filter(sub -> sub.getStoppedAt() == null)
+                .forEach(sub -> {
+                    sub.stop(now);
+                    Duration elapsed = Duration.between(sub.getStartedAt(), now);
+                    logbookService.append(session.getLogFile(), "Sub timer " + sub.getDurationHours() + "h stopped at " + formatDuration(elapsed));
+                });
+
+        // Stop the main timer session
+        session.stop(now);
+        Duration mainElapsed = Duration.between(session.getStartedAt(), now);
+        logbookService.append(session.getLogFile(), "All timers reset. Main timer stopped at " + formatDuration(mainElapsed));
+        
+        return sessionRepository.save(session);
+    }
+
     @Transactional(readOnly = true)
     public TimerSession requireActiveSession(UUID sessionId) {
         return sessionRepository.findById(sessionId).orElseThrow();

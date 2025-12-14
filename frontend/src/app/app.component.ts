@@ -21,6 +21,7 @@ export class AppComponent implements OnInit, OnDestroy {
   breachThreshold = 15 * 60;
   startLoading = new Set<number>();
   stopLoading = new Set<string>();
+  resetLoading = new Set<number>();
   errorMessage?: string;
   infoMessage?: string;
   notificationsEnabled = typeof Notification !== 'undefined' && Notification.permission === 'granted';
@@ -135,12 +136,34 @@ export class AppComponent implements OnInit, OnDestroy {
       });
   }
 
+  resetAllTimers(ferm: FermDto): void {
+    if (this.resetLoading.has(ferm.id) || !ferm.mainTimer.startedAt) {
+      return;
+    }
+    this.resetLoading.add(ferm.id);
+    this.api
+      .resetAllTimers(ferm.id)
+      .pipe(takeUntil(this.destroy$), finalize(() => this.resetLoading.delete(ferm.id)))
+      .subscribe({
+        next: updated => {
+          this.mergeFerm(updated);
+        },
+        error: err => {
+          this.errorMessage = err?.error?.message ?? 'Failed to reset timers.';
+        }
+      });
+  }
+
   canStart(ferm: FermDto): boolean {
     return !ferm.mainTimer.running && !this.startLoading.has(ferm.id);
   }
 
   isSubStopDisabled(ferm: FermDto, timer: TimerDto): boolean {
     return !ferm.mainTimer.startedAt || timer.stopped || this.stopLoading.has(`${ferm.id}-${timer.durationHours}`);
+  }
+
+  canReset(ferm: FermDto): boolean {
+    return ferm.mainTimer.startedAt && !this.resetLoading.has(ferm.id);
   }
 
   tileClass(timer: TimerDto, isSubTimer: boolean = false): string {
