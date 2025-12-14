@@ -143,11 +143,16 @@ export class AppComponent implements OnInit, OnDestroy {
     return !ferm.mainTimer.startedAt || timer.stopped || this.stopLoading.has(`${ferm.id}-${timer.durationHours}`);
   }
 
-  tileClass(timer: TimerDto): string {
+  tileClass(timer: TimerDto, isSubTimer: boolean = false): string {
     if (!timer.startedAt || timer.stopped) {
       return 'gray';
     }
     const pastZero = this.secondsPastZero(timer);
+    // For subtimers, turn red immediately when past zero
+    if (isSubTimer && pastZero > 0) {
+      return 'red';
+    }
+    // For main timer, use breach threshold
     if (pastZero >= this.breachThreshold) {
       return 'red';
     }
@@ -179,7 +184,14 @@ export class AppComponent implements OnInit, OnDestroy {
     return Math.max(0, past);
   }
 
-  formatCountdown(timer: TimerDto): string {
+  formatCountdown(timer: TimerDto, isSubTimer: boolean = false): string {
+    // For subtimers, when past zero, show the count-up time instead of 0
+    if (isSubTimer) {
+      const pastZero = this.secondsPastZero(timer);
+      if (pastZero > 0) {
+        return this.formatDuration(pastZero);
+      }
+    }
     const remaining = this.secondsRemaining(timer);
     return this.formatDuration(remaining);
   }

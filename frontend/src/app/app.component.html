@@ -57,12 +57,12 @@
           class="sub-button"
           type="button"
           *ngFor="let timer of ferm.subTimers"
-          [ngClass]="tileClass(timer)"
+          [ngClass]="tileClass(timer, true)"
           (click)="stopSubTimer(ferm, timer)"
           [disabled]="isSubStopDisabled(ferm, timer)"
         >
           <span class="sub-label">{{ timer.label }}</span>
-          <span class="sub-time">{{ formatCountdown(timer) }}</span>
+          <span class="sub-time">{{ formatCountdown(timer, true) }}</span>
         </button>
       </div>
     </article>

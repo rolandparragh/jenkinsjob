@@ -88,13 +88,18 @@ public class TimerViewMapper {
     private TimerDto activeSubTimer(SubTimerSession sub) {
         Duration duration = Duration.ofHours(sub.getDurationHours());
         TimerStatus status = calculator.statusFor(sub.getStartedAt(), sub.getStoppedAt(), duration);
+        // For subtimers, turn red immediately when past zero (not waiting for breach threshold)
+        TimerColor color = status.color();
+        if (status.secondsPastZero() > 0 && !status.stopped()) {
+            color = TimerColor.RED;
+        }
         return new TimerDto(
                 sub.getDurationHours() + "h",
                 sub.getDurationHours(),
                 status.durationSeconds(),
                 status.secondsRemaining(),
                 status.secondsPastZero(),
-                status.color(),
+                color,
                 status.running(),
                 status.stopped(),
                 status.breachActive(),
